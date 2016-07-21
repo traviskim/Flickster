@@ -10,12 +10,17 @@ import java.util.ArrayList;
  * Created by traviswkim on 7/18/16.
  */
 public class Movie {
+
+    public enum MoviePopularities{
+        POPULAR, LESS_POPULAR;
+    }
+
     public String getPosterPath() {
         return String.format("https://image.tmdb.org/t/p/w342/%s", posterPath);
     }
 
-    public String getBackdropPath() {
-        return String.format("https://image.tmdb.org/t/p/w780/%s", backdropPath);
+    public String getBackdropPath(int size) {
+        return String.format("https://image.tmdb.org/t/p/w%s/%s",size, backdropPath);
     }
 
     public String getOriginalTitle() {
@@ -30,11 +35,15 @@ public class Movie {
         return releaseDate;
     }
 
+    public MoviePopularities getPopular() { return popular; }
+
     String posterPath;
     String backdropPath;
     String originalTitle;
     String overview;
     String releaseDate;
+    String voteAverage;
+    MoviePopularities popular;
 
     public Movie(JSONObject jsonObj) throws JSONException{
         this.posterPath = jsonObj.getString("poster_path");
@@ -42,6 +51,12 @@ public class Movie {
         this.originalTitle = jsonObj.getString("original_title");
         this.overview = jsonObj.getString("overview");
         this.releaseDate = jsonObj.getString("release_date");
+        this.voteAverage = jsonObj.getString("vote_average");
+        if(Float.valueOf(voteAverage) > 5){
+            this.popular = MoviePopularities.POPULAR;
+        }else{
+            this.popular = MoviePopularities.LESS_POPULAR;
+        }
 
     }
 
