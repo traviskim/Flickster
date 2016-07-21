@@ -1,6 +1,8 @@
 package com.traviswkim.flickster;
 
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ListView;
@@ -20,9 +22,13 @@ import cz.msebera.android.httpclient.Header;
 
 public class MovieActivity extends AppCompatActivity {
 
+    private SwipeRefreshLayout swipeContainer;
+    AsyncHttpClient client = new AsyncHttpClient();
     ArrayList<Movie> movies;
     MovieArrayAdapter movieAdapter;
     ListView lvItems;
+    String url = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,8 +39,33 @@ public class MovieActivity extends AppCompatActivity {
         movieAdapter = new MovieArrayAdapter(this, movies);
         lvItems.setAdapter(movieAdapter);
 
-        String url = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
-        AsyncHttpClient client = new AsyncHttpClient();
+        //getting movie data
+        fetchTimelineAsync(0, false);
+
+        // Lookup the swipe container view
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync(0, true);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+    }
+
+    public void fetchTimelineAsync(int page, final boolean isRefresh) {
+        // Send the network request to fetch the updated data
+        // `client` here is an instance of Android Async HTTP
         client.get(url, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -42,9 +73,15 @@ public class MovieActivity extends AppCompatActivity {
                 try {
                     if(response.optJSONArray("results") != null) {
                         movieJsonResults = response.getJSONArray("results");
+                        movies.clear();
+                        movieAdapter.clear();
                         movies.addAll(Movie.fromJSONArray(movieJsonResults));
                         movieAdapter.notifyDataSetChanged();
+                        // Now we call setRefreshing(false) to signal refresh has finished
                         Log.d("DEBUG", movieJsonResults.toString());
+                        if(isRefresh == true) {
+                            swipeContainer.setRefreshing(false);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -53,10 +90,10 @@ public class MovieActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DEBUG", "Fail to get movie list");
+                Log.d("DEBUG", "Fail to refresh movie list");
                 super.onFailure(statusCode, headers, responseString, throwable);
             }
         });
-
     }
+
 }
