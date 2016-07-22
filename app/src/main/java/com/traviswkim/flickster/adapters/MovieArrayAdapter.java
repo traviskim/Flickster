@@ -60,11 +60,10 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
                 return null;
             }
             viewHolder.ivImage = (ImageView) convertView.findViewById(R.id.ivMovieImage);
-            viewHolder.tvTitle = null;
+            viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
             viewHolder.tvOverview = null;
             viewHolder.tvReleaseDate = null;
             if(type != Movie.MoviePopularities.POPULAR.ordinal()) {
-                viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
                 viewHolder.tvOverview = (TextView) convertView.findViewById(R.id.tvOverview);
                 viewHolder.tvReleaseDate = (TextView) convertView.findViewById(R.id.tvReleaseDate);
             }
@@ -96,8 +95,8 @@ public class MovieArrayAdapter extends ArrayAdapter<Movie> {
                     .into(viewHolder.ivImage);
         }
 
+        viewHolder.tvTitle.setText(movie.getOriginalTitle());
         if(type != Movie.MoviePopularities.POPULAR.ordinal()) {
-            viewHolder.tvTitle.setText(movie.getOriginalTitle());
             viewHolder.tvOverview.setText(movie.getOverview());
             viewHolder.tvReleaseDate.setText(movie.getReleaseDate());
         }
