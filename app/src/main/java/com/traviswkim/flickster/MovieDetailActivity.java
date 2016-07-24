@@ -1,6 +1,7 @@
 package com.traviswkim.flickster;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
+import com.traviswkim.flickster.databinding.ActivityMovieDetailBinding;
 import com.traviswkim.flickster.models.Movie;
 
 import org.json.JSONArray;
@@ -20,6 +22,7 @@ import cz.msebera.android.httpclient.Header;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
+    private ActivityMovieDetailBinding binding;
     TextView tvTitle;
     TextView tvReleaseDate;
     TextView tvVoteAvg;
@@ -31,7 +34,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
         //Enable back button
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -45,11 +48,11 @@ public class MovieDetailActivity extends AppCompatActivity {
             startActivity(new Intent(MovieDetailActivity.this, MovieActivity.class));
         }
 
-        tvTitle = (TextView) findViewById(R.id.tvTitle);
-        tvReleaseDate = (TextView) findViewById(R.id.tvReleaseDate);
-        tvVoteAvg = (TextView) findViewById(R.id.tvVoteAvg);
-        tvOverview = (TextView) findViewById(R.id.tvOverview);
-        ivMovieImage = (ImageView) findViewById(R.id.ivMovieImage);
+        tvTitle = binding.tvTitle;
+        tvReleaseDate = binding.tvReleaseDate;
+        tvVoteAvg = binding.tvVoteAvg;
+        tvOverview = binding.tvOverview;
+        ivMovieImage = binding.ivMovieImage;
         fetchAMovieData(0, false);
 
     }
