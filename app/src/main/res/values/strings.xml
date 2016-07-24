@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Flickster</string>
     <string name="flickster">Flickster</string>
+    <string name="not_available_movie">Selected movie detail is not available</string>
 </resources>

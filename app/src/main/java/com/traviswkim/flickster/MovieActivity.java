@@ -1,10 +1,13 @@
 package com.traviswkim.flickster;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -28,6 +31,7 @@ public class MovieActivity extends AppCompatActivity {
     MovieArrayAdapter movieAdapter;
     ListView lvItems;
     String url = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed";
+    String pKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,19 @@ public class MovieActivity extends AppCompatActivity {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+        setupListViewListener();
+    }
 
+    private void setupListViewListener(){
+        lvItems.setOnItemClickListener(
+                new AdapterView.OnItemClickListener(){
+                    public void onItemClick(AdapterView<?> adapter, View item, int pos, long id){
+                        Intent i = new Intent(MovieActivity.this, MovieDetailActivity.class);
+                        i.putExtra("id", movies.get(pos).getId());
+                        i.putExtra("pkey", pKey);
+                        startActivity(i);
+                    }
+                });
     }
 
     public void fetchTimelineAsync(int page, final boolean isRefresh) {

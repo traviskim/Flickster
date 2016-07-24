@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.traviswkim.flickster.MovieDetailActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivMovieImage"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/poster_placeholder"
+        android:adjustViewBounds="false"
+        android:scaleType="fitXY" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Finding Dory"
+        android:id="@+id/tvTitle"
+        android:layout_below="@+id/ivMovieImage"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Release Date : "
+        android:id="@+id/lableReleaseDate"
+        android:layout_below="@+id/tvTitle"
+        android:layout_alignLeft="@+id/tvTitle"
+        android:layout_alignStart="@+id/tvTitle"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="2016-08-15"
+        android:id="@+id/tvReleaseDate"
+        android:layout_below="@+id/tvTitle"
+        android:layout_toRightOf="@+id/lableReleaseDate"
+        android:layout_toEndOf="@+id/lableReleaseDate" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vote Avg."
+        android:id="@+id/lableVoteAvg"
+        android:layout_below="@+id/lableReleaseDate"
+        android:layout_alignLeft="@+id/lableReleaseDate"
+        android:layout_alignStart="@+id/lableReleaseDate"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="5.75"
+        android:id="@+id/tvVoteAvg"
+        android:layout_below="@+id/lableReleaseDate"
+        android:layout_toRightOf="@+id/lableVoteAvg"
+        android:layout_toEndOf="@+id/lableVoteAvg" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Overview"
+        android:id="@+id/lableOverview"
+        android:layout_below="@+id/lableVoteAvg"
+        android:layout_alignLeft="@+id/lableVoteAvg"
+        android:layout_alignStart="@+id/lableVoteAvg"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="'Finding Dory' reunites Dory with friends Nemo and Marlin on a search for answers about her past. What can she remember? Who are her parents? And where did she learn to speak Whale?"
+        android:id="@+id/tvOverview"
+        android:layout_below="@+id/lableOverview"
+        android:layout_alignLeft="@+id/lableOverview"
+        android:layout_alignStart="@+id/lableOverview" />
+
+</RelativeLayout>

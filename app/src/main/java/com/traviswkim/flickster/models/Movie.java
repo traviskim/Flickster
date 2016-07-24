@@ -15,6 +15,8 @@ public class Movie {
         POPULAR, LESS_POPULAR;
     }
 
+    public String getId() { return id; }
+
     public String getPosterPath() {
         return String.format("https://image.tmdb.org/t/p/w342/%s", posterPath);
     }
@@ -37,6 +39,9 @@ public class Movie {
 
     public MoviePopularities getPopular() { return popular; }
 
+    public String getVoteAverage() { return voteAverage; }
+
+    String id;
     String posterPath;
     String backdropPath;
     String originalTitle;
@@ -45,17 +50,26 @@ public class Movie {
     String voteAverage;
     MoviePopularities popular;
 
+    private String getJSONObjValue(JSONObject jsonObj, String aKey) throws JSONException{
+        String value = "";
+        if(jsonObj.has(aKey)) {
+            value = jsonObj.getString(aKey);
+        }
+        return value;
+    }
+
     public Movie(JSONObject jsonObj) throws JSONException{
-        this.posterPath = jsonObj.getString("poster_path");
-        this.backdropPath = jsonObj.getString("backdrop_path");
-        this.originalTitle = jsonObj.getString("original_title");
-        this.overview = jsonObj.getString("overview");
-        this.releaseDate = jsonObj.getString("release_date");
-        this.voteAverage = jsonObj.getString("vote_average");
-        if(Float.valueOf(voteAverage) > 5){
+        this.id = getJSONObjValue(jsonObj, "id");
+        this.posterPath = getJSONObjValue(jsonObj, "poster_path");
+        this.backdropPath = getJSONObjValue(jsonObj, "backdrop_path");
+        this.originalTitle = getJSONObjValue(jsonObj, "original_title");
+        this.overview = getJSONObjValue(jsonObj, "overview");
+        this.releaseDate = getJSONObjValue(jsonObj, "release_date");
+        this.voteAverage = getJSONObjValue(jsonObj, "vote_average");
+        //Default
+        this.popular = MoviePopularities.LESS_POPULAR;
+        if(!this.voteAverage.isEmpty() && Float.valueOf(voteAverage) >= 5){
             this.popular = MoviePopularities.POPULAR;
-        }else{
-            this.popular = MoviePopularities.LESS_POPULAR;
         }
 
     }

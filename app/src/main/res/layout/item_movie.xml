@@ -10,7 +10,8 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        tools:src="@drawable/poster_placeholder" />
+        tools:src="@drawable/poster_placeholder"
+        android:adjustViewBounds="false" />
 
     <TextView
         android:layout_width="wrap_content"
