@@ -13,6 +13,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 import com.traviswkim.flickster.databinding.ActivityMovieDetailBinding;
 import com.traviswkim.flickster.models.Movie;
+import com.traviswkim.flickster.utils.NetworkUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,41 +59,43 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     public void fetchAMovieData(int page, final boolean isRefresh) {
-        // Send the network request to fetch the updated data
-        // `client` here is an instance of Android Async HTTP
-        client.get(url, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                JSONArray movieJsonResults = null;
-                try {
-                    if(response != null) {
-                        Movie aMovie = new Movie(response);
-                        Picasso.with(MovieDetailActivity.this)
-                                .load(aMovie.getBackdropPath(780))
-                                .placeholder(R.drawable.poster_placeholder)
-                                .error(R.drawable.poster_placeholder)
-                                .into(ivMovieImage);
-                        tvTitle.setText(aMovie.getOriginalTitle());
-                        tvReleaseDate.setText(aMovie.getReleaseDate());
-                        tvVoteAvg.setText(aMovie.getVoteAverage());
-                        tvOverview.setText(aMovie.getOverview());
+        if(NetworkUtil.isNetworkConnected(MovieDetailActivity.this)) {
+            // Send the network request to fetch the updated data
+            // `client` here is an instance of Android Async HTTP
+            client.get(url, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    JSONArray movieJsonResults = null;
+                    try {
+                        if (response != null) {
+                            Movie aMovie = new Movie(response);
+                            Picasso.with(MovieDetailActivity.this)
+                                    .load(aMovie.getBackdropPath(780))
+                                    .placeholder(R.drawable.poster_placeholder)
+                                    .error(R.drawable.poster_placeholder)
+                                    .into(ivMovieImage);
+                            tvTitle.setText(aMovie.getOriginalTitle());
+                            tvReleaseDate.setText(aMovie.getReleaseDate());
+                            tvVoteAvg.setText(aMovie.getVoteAverage());
+                            tvOverview.setText(aMovie.getOverview());
 
-                        setTitle(aMovie.getOriginalTitle());
+                            setTitle(aMovie.getOriginalTitle());
 
-                        // Now we call setRefreshing(false) to signal refresh has finished
-                        Log.d("DEBUG", response.toString());
+                            // Now we call setRefreshing(false) to signal refresh has finished
+                            Log.d("DEBUG", response.toString());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DEBUG", "Fail to refresh movie list");
-                super.onFailure(statusCode, headers, responseString, throwable);
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    Log.d("DEBUG", "Fail to refresh movie list");
+                    super.onFailure(statusCode, headers, responseString, throwable);
+                }
+            });
+        }
     }
 
 }

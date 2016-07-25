@@ -1,10 +1,7 @@
 package com.traviswkim.flickster;
 
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -20,6 +17,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.traviswkim.flickster.adapters.MovieArrayAdapter;
 import com.traviswkim.flickster.databinding.ActivityMovieBinding;
 import com.traviswkim.flickster.models.Movie;
+import com.traviswkim.flickster.utils.NetworkUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,9 +85,7 @@ public class MovieActivity extends AppCompatActivity {
     }
 
     public void fetchTimelineAsync(int page, final boolean isRefresh) {
-        ConnectivityManager ConnectionManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo=ConnectionManager.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isConnected()==true ) {
+        if(NetworkUtil.isNetworkConnected(MovieActivity.this)) {
             // Send the network request to fetch the updated data
             // `client` here is an instance of Android Async HTTP
             client.get(url, new JsonHttpResponseHandler() {
@@ -124,5 +120,4 @@ public class MovieActivity extends AppCompatActivity {
             Toast.makeText(MovieActivity.this, "Network Not Available", Toast.LENGTH_LONG).show();
         }
     }
-
 }
