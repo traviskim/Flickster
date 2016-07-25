@@ -1,7 +1,10 @@
 package com.traviswkim.flickster;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -83,36 +87,42 @@ public class MovieActivity extends AppCompatActivity {
     }
 
     public void fetchTimelineAsync(int page, final boolean isRefresh) {
-        // Send the network request to fetch the updated data
-        // `client` here is an instance of Android Async HTTP
-        client.get(url, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                JSONArray movieJsonResults = null;
-                try {
-                    if(response.optJSONArray("results") != null) {
-                        movieJsonResults = response.getJSONArray("results");
-                        movies.clear();
-                        movieAdapter.clear();
-                        movies.addAll(Movie.fromJSONArray(movieJsonResults));
-                        movieAdapter.notifyDataSetChanged();
-                        // Now we call setRefreshing(false) to signal refresh has finished
-                        Log.d("DEBUG", movieJsonResults.toString());
-                        if(isRefresh == true) {
-                            swipeContainer.setRefreshing(false);
+        ConnectivityManager ConnectionManager=(ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo=ConnectionManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isConnected()==true ) {
+            // Send the network request to fetch the updated data
+            // `client` here is an instance of Android Async HTTP
+            client.get(url, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    JSONArray movieJsonResults = null;
+                    try {
+                        if (response.optJSONArray("results") != null) {
+                            movieJsonResults = response.getJSONArray("results");
+                            movies.clear();
+                            movieAdapter.clear();
+                            movies.addAll(Movie.fromJSONArray(movieJsonResults));
+                            movieAdapter.notifyDataSetChanged();
+                            // Now we call setRefreshing(false) to signal refresh has finished
+                            Log.d("DEBUG", movieJsonResults.toString());
+                            if (isRefresh == true) {
+                                swipeContainer.setRefreshing(false);
+                            }
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("DEBUG", "Fail to refresh movie list");
-                super.onFailure(statusCode, headers, responseString, throwable);
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("DEBUG", "Fail to refresh movie list");
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                }
+            });
+        }else{
+            Toast.makeText(MovieActivity.this, "Network Not Available", Toast.LENGTH_LONG).show();
+        }
     }
 
 }
